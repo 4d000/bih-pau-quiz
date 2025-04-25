@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="bs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kviz - Ispit Općeg Znanja</title>
+
+    <!-- Use a reliable CDN for Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/postcss7-compat@2.2.17/dist/tailwind.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles if needed */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Using Inter font */
+        }
+
+        /* Style for correct/incorrect feedback */
+        .correct {
+            background-color: #22c55e !important;
+            /* Green-500 */
+            color: white !important;
+            border-color: #16a34a !important;
+            /* Green-600 */
+        }
+
+        .incorrect {
+            background-color: #ef4444 !important;
+            /* Red-500 */
+            color: white !important;
+            border-color: #dc2626 !important;
+            /* Red-600 */
+        }
+
+        /* Style for selected but not yet validated answer */
+        .selected {
+            background-color: #3b82f6 !important;
+            /* Blue-500 */
+            color: white !important;
+            border-color: #2563eb !important;
+            /* Blue-600 */
+        }
+
+        /* Ensure buttons and options have good touch target size */
+        .option-button,
+        #next-button {
+            padding: 0.75rem 1.5rem;
+            /* p-3 sm:p-4 */
+            margin: 0.5rem 0;
+            /* m-2 */
+            border-radius: 0.5rem;
+            /* rounded-lg */
+            border: 1px solid #d1d5db;
+            /* border-gray-300 */
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            text-align: left;
+            width: 100%;
+            background-color: white;
+            /* bg-white */
+        }
+
+        .option-button:hover {
+            background-color: #f3f4f6;
+            /* hover:bg-gray-100 */
+        }
+
+        #next-button {
+            background-color: #3b82f6;
+            /* bg-blue-500 */
+            color: white;
+            /* text-white */
+            text-align: center;
+        }
+
+        #next-button:hover {
+            background-color: #2563eb;
+            /* hover:bg-blue-600 */
+        }
+
+        #next-button:disabled {
+            background-color: #9ca3af;
+            /* bg-gray-400 */
+            cursor: not-allowed;
+        }
+
+        /* Message Box Styling */
+        #message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            /* Hidden by default */
+            font-weight: 500;
+        }
+
+        #message-box.success {
+            background-color: #dcfce7;
+            /* green-100 */
+            color: #166534;
+            /* green-800 */
+            border: 1px solid #86efac;
+            /* green-300 */
+        }
+
+        #message-box.error {
+            background-color: #fee2e2;
+            /* red-100 */
+            color: #991b1b;
+            /* red-800 */
+            border: 1px solid #fca5a5;
+            /* red-300 */
+        }
+
+        #message-box.info {
+            background-color: #e0f2fe;
+            /* sky-100 */
+            color: #075985;
+            /* sky-800 */
+            border: 1px solid #7dd3fc;
+            /* sky-300 */
+        }
+
+        .option-button {
+            width: 100%;
+            background-color: white;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            text-align: left;
+            transition: background-color 0.2s;
+        }
+
+        .option-button:hover {
+            background-color: #f3f4f6;
+        }
+
+        .option-button.correct {
+            background-color: #d1fae5;
+            border-color: #10b981;
+        }
+
+        .option-button.incorrect {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-2xl">
+        <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">Kviz Općeg Znanja</h1>
+
+        <!-- Small floating button to show input -->
+        <div id="show-input-btn" class="hidden fixed bottom-4 right-4">
+            <button class="bg-blue-500 text-white rounded-full p-2 shadow-lg hover:bg-blue-600"
+                title="Promijeni broj pitanja">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="input-section" class="mb-4">
+            <a href="index-full.html" class="inline-block mb-3 px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 rounded-full transition duration-300 ease-in-out">
+                Alpha version <span class="ml-1">→</span>
+            </a>
+            <label for="question-count" class="block mb-2 text-sm font-medium text-gray-700">Broj pitanja za mini
+                test:</label>
+            <input id="question-count" type="number" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                placeholder="Unesite broj pitanja">
+            <button id="start-test"
+                class="mt-3 w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Započni
+                test</button>
+        </div>
+
+        <div id="quiz-container" class="hidden">
+            <div class="flex justify-between items-center text-sm text-gray-500 mb-2">
+                <div>Pitanje <span id="current-q">1</span> od <span id="total-q">?</span></div>
+                <div>Vrijeme: <span id="timer">00:00</span></div>
+            </div>
+            <div id="question" class="text-lg sm:text-xl font-semibold text-gray-700 mb-5 min-h-[60px]">Učitavanje
+                pitanja...</div>
+            <div id="options" class="space-y-3 mb-5"></div>
+            <div id="feedback" class="text-center font-medium mb-4 min-h-[24px]"></div>
+            <button id="next-button" class="w-full" disabled>Dalje</button>
+        </div>
+
+        <div id="score-container" class="text-center mt-6 hidden">
+            <p class="text-lg text-gray-600">Trenutni rezultat: <span id="score" class="font-bold">0</span> / <span
+                    id="total-answered" class="font-bold">0</span></p>
+        </div>
+
+        <div id="completion-message" class="text-center mt-8 hidden">
+            <h2 class="text-xl font-semibold text-green-600">Čestitamo!</h2>
+            <p class="text-gray-700 mt-2">Završili ste sva pitanja. Vaš konačni rezultat je <span id="final-score"
+                    class="font-bold">0</span>/<span id="final-total" class="font-bold">0</span>.</p>
+            <div class="flex justify-end mt-4">
+                <button id="toggle-filter" class="text-sm text-blue-600 hover:underline">Prikaži samo pogrešne
+                    odgovore</button>
+            </div>
+            <div id="review-list" class="mt-4 text-left max-h-[300px] overflow-y-auto"></div>
+            <button id="restart-button"
+                class="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">Počni
+                ponovo</button>
+        </div>
+    </div>
+    <script src="questions-ok.js"></script>
+    <script>
+        const questionInput = document.getElementById('question-count');
+        const startBtn = document.getElementById('start-test');
+        const quizContainer = document.getElementById('quiz-container');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const nextButton = document.getElementById('next-button');
+        const feedbackEl = document.getElementById('feedback');
+        const currentQEl = document.getElementById('current-q');
+        const totalQEl = document.getElementById('total-q');
+        const scoreEl = document.getElementById('score');
+        const totalAnsweredEl = document.getElementById('total-answered');
+        const scoreContainer = document.getElementById('score-container');
+        const completionMessage = document.getElementById('completion-message');
+        const reviewList = document.getElementById('review-list');
+        const restartBtn = document.getElementById('restart-button');
+        const timerDisplay = document.getElementById('timer');
+        const toggleFilter = document.getElementById('toggle-filter');
+        const messageBox = document.getElementById('message-box'); // Get the message box
+
+        let quizQuestions = [];
+        let usedQuestions = new Set();
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let startTime;
+        let timerInterval;
+        let reviewData = [];
+        let filterWrong = false;
+
+        // --- LOCAL STORAGE FUNCTIONS ---
+        function setLocalStorage(name, value) {
+            try {
+                localStorage.setItem(name, JSON.stringify(value));
+            } catch (error) {
+                console.error(`Error setting localStorage item ${name}:`, error);
+                showMessage('Greška pri čuvanju podataka.', 'error');
+            }
+        }
+
+        function getLocalStorage(name) {
+            try {
+                const item = localStorage.getItem(name);
+                return item ? JSON.parse(item) : null;
+            } catch (error) {
+                console.error(`Error getting localStorage item ${name}:`, error);
+                showMessage('Greška pri učitavanju podataka.', 'error');
+                return null;
+            }
+        }
+
+        function removeLocalStorage(name) {
+            try {
+                localStorage.removeItem(name);
+            } catch (error) {
+                console.error(`Error removing localStorage item ${name}:`, error);
+                showMessage('Greška pri brisanju podataka.', 'error');
+            }
+        }
+        // --- END LOCAL STORAGE FUNCTIONS ---
+
+        // --- MESSAGE BOX FUNCTIONS ---
+        function showMessage(text, type, duration = 3000) {
+            messageBox.textContent = text;
+            messageBox.className = ''; // Clear existing classes
+            messageBox.classList.add('message-box', type);
+            messageBox.style.display = 'block';
+
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, duration);
+        }
+        // --- END MESSAGE BOX FUNCTIONS ---
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function startQuiz() {
+            const numberOfQuestions = parseInt(questionInput.value);
+            if (isNaN(numberOfQuestions) || numberOfQuestions <= 0) {
+                showMessage("Unesite validan broj pitanja.", 'error');
+                return;
+            }
+
+            // Check if data should be cleared
+            checkAndClearLocalStorage();
+
+            // Load correctly answered questions from local storage
+            const correctQuestionIds = getLocalStorage('correctlyAnswered') || [];
+
+            //  Weighting mechanism:  Reduce the probability of showing correct questions
+            const weightedQuestions = questions.map((q, index) => ({
+                ...q,
+                weight: correctQuestionIds.includes(index) ? 0.5 : 1 // Lower weight if answered correctly
+            }));
+
+            const availableQuestions = [];
+            weightedQuestions.forEach((q, index) => {
+                for (let i = 0; i < q.weight; i++) {
+                    availableQuestions.push(index);
+                }
+            });
+
+            // Select questions randomly based on weight
+            const selectedIndices = [];
+            for (let i = 0; i < numberOfQuestions && availableQuestions.length > 0; i++) {
+                const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+                selectedIndices.push(availableQuestions[randomIndex]);
+                availableQuestions.splice(randomIndex, 1);
+            }
+
+            quizQuestions = selectedIndices.map(index => questions[index]);
+
+            currentQuestionIndex = 0;
+            score = 0;
+            reviewData = [];
+            filterWrong = false;
+            scoreEl.textContent = 0;
+            totalAnsweredEl.textContent = 0;
+            completionMessage.classList.add('hidden');
+            scoreContainer.classList.remove('hidden');
+            quizContainer.classList.remove('hidden');
+            startTime = Date.now();
+            startTimer();
+            showQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const now = Date.now();
+                const elapsed = Math.floor((now - startTime) / 1000);
+                const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                const seconds = String(elapsed % 60).padStart(2, '0');
+                timerDisplay.textContent = `${minutes}:${seconds}`;
+            }, 1000);
+        }
+
+        function showQuestion() {
+            const current = quizQuestions[currentQuestionIndex];
+            questionEl.textContent = current.question;
+            currentQEl.textContent = currentQuestionIndex + 1;
+            totalQEl.textContent = quizQuestions.length;
+            optionsEl.innerHTML = '';
+            feedbackEl.textContent = '';
+
+            // Create array of objects containing the option text and original index
+            const optionsWithIndices = current.options.map((option, index) => ({
+                text: option,
+                originalIndex: index
+            }));
+
+            // Shuffle the options array
+            shuffleArray(optionsWithIndices);
+
+            // Create buttons with shuffled options but preserve original indices for answer checking
+            optionsWithIndices.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option.text;
+                // Pass the original index to maintain correct answer checking
+                button.onclick = () => selectAnswer(option.originalIndex, button);
+                optionsEl.appendChild(button);
+            });
+        }
+
+        function selectAnswer(index, button) {
+            const current = quizQuestions[currentQuestionIndex];
+            const buttons = optionsEl.querySelectorAll('button');
+            const wasCorrect = index === current.correctAnswerIndex;
+
+            reviewData.push({
+                question: current.question,
+                selected: current.options[index],
+                correct: current.options[current.correctAnswerIndex],
+                correctAnswerIndex: current.correctAnswerIndex,
+                wasCorrect
+            });
+
+            buttons.forEach(btn => btn.disabled = true);
+            if (wasCorrect) {
+                button.classList.add('correct');
+                score++;
+                scoreEl.textContent = score;
+
+                //  Save the correctly answered question ID to local storage
+                const correctQuestionIds = getLocalStorage('correctlyAnswered') || [];
+                if (!correctQuestionIds.includes(questions.indexOf(current))) {
+                    correctQuestionIds.push(questions.indexOf(current));
+                    setLocalStorage('correctlyAnswered', correctQuestionIds);
+
+                    // Save the timestamp of the first correct answer if it doesn't exist
+                    if (!getLocalStorage('firstCorrectTimestamp')) {
+                        setLocalStorage('firstCorrectTimestamp', Date.now());
+                    }
+                }
+            } else {
+                button.classList.add('incorrect');
+                // Find and highlight the correct answer button
+                const correctButton = Array.from(buttons).find(
+                    btn => btn.textContent === current.options[current.correctAnswerIndex]
+                );
+                if (correctButton) {
+                    correctButton.classList.add('correct');
+                }
+            }
+            totalAnsweredEl.textContent = currentQuestionIndex + 1;
+            nextButton.disabled = false;
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizQuestions.length) {
+                showQuestion();
+                nextButton.disabled = true;
+            } else {
+                clearInterval(timerInterval);
+                quizContainer.classList.add('hidden');
+                completionMessage.classList.remove('hidden');
+                document.getElementById('final-score').textContent = score;
+                document.getElementById('final-total').textContent = quizQuestions.length;
+                renderReviewList();
+            }
+        });
+
+        toggleFilter.addEventListener('click', () => {
+            filterWrong = !filterWrong;
+            toggleFilter.textContent = filterWrong ? 'Prikaži sve odgovore' : 'Prikaži samo pogrešne odgovore';
+            renderReviewList();
+        });
+
+        function renderReviewList() {
+            reviewList.innerHTML = reviewData
+                .filter(entry => !filterWrong || !entry.wasCorrect)
+                .map((entry, i) => `
+      <div class="mb-4">
+        <p class="font-semibold text-gray-800">${i + 1}. ${entry.question}</p>
+        <p class="text-sm text-gray-600">Tvoj odgovor: <span class="${entry.wasCorrect ? 'text-green-600' : 'text-red-600'}">${entry.selected}</span></p>
+        ${!entry.wasCorrect ? `<p class="text-sm text-gray-600">Tačan odgovor: <span class="text-green-600">${entry.correct}</span></p>` : ''}
+      </div>`)
+                .join('');
+        }
+
+        restartBtn.addEventListener('click', () => {
+            quizContainer.classList.add('hidden');
+            completionMessage.classList.add('hidden');
+            questionInput.value = '';
+            //  Data is now cleared automatically after 8 hours
+        });
+
+        startBtn.addEventListener('click', () => {
+            const questionCount = document.getElementById('question-count').value;
+            if (questionCount > 0) {
+                document.getElementById('input-section').style.display = 'none';
+                quizContainer.classList.remove('hidden');
+                document.getElementById('show-input-btn').classList.remove('hidden');
+            }
+            startQuiz();
+        });
+
+        document.getElementById('show-input-btn').addEventListener('click', function () {
+            const inputSection = document.getElementById('input-section');
+            if (inputSection.style.display === 'none') {
+                inputSection.style.display = 'block';
+                this.querySelector('svg').innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        `;
+            } else {
+                inputSection.style.display = 'none';
+                this.querySelector('svg').innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        `;
+            }
+        });
+        document.getElementById('restart-button').addEventListener('click', function () {
+            document.getElementById('input-section').classList.remove('hidden');
+            document.getElementById('completion-message').classList.add('hidden');
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('score-container').classList.add('hidden');
+            document.getElementById('show-input-btn').classList.add('hidden');
+            document.getElementById('question-count').value = '';
+            const inputSection = document.getElementById('input-section');
+            if (inputSection.style.display === 'none') {
+                inputSection.style.display = 'block';
+                this.querySelector('svg').innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        `;
+            }
+        });
+
+        function checkAndClearLocalStorage() {
+            const firstCorrectTimestamp = getLocalStorage('firstCorrectTimestamp');
+            if (firstCorrectTimestamp) {
+                const elapsed = Date.now() - firstCorrectTimestamp;
+                const eightHours = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
+                if (elapsed > eightHours) {
+                    removeLocalStorage('correctlyAnswered');
+                    removeLocalStorage('firstCorrectTimestamp');
+                    showMessage('Podaci o kvizu su obrisani nakon 8 sati.', 'info');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
