@@ -3,6 +3,8 @@
 An interactive quiz application to help you prepare for public administration exams in Bosnia and Herzegovina.
 Test your knowledge on constitutional law, administrative procedures, and more.
 
+🌐 **Access the live quiz here:** [https://4d000.github.io/bih-pau-quiz/](https://4d000.github.io/bih-pau-quiz/)
+
 <!--![Quiz Screenshot](https://user-images.githubusercontent.com/your-username/your-screenshot.png)-->
 
 ---
