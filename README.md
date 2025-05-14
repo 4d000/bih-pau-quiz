@@ -1,3 +1,6 @@
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/4d000/bih-pau-quiz/edit/main/README.md)
+[![en](https://img.shields.io/badge/lang-bs-yellow.svg)](https://github.com/4d000/bih-pau-quiz/edit/main/README.bs.md)
+
 # 🇧🇦 BiH Public Administration Exam Practice
 
 An interactive quiz application to help you prepare for public administration exams in Bosnia and Herzegovina.
@@ -5,7 +8,6 @@ Test your knowledge on constitutional law, administrative procedures, and more.
 
 🌐 **Access the live quiz here:** [https://4d000.github.io/bih-pau-quiz/](https://4d000.github.io/bih-pau-quiz/)
 
-<!--![Quiz Screenshot](https://user-images.githubusercontent.com/your-username/your-screenshot.png)-->
 
 ---
 
