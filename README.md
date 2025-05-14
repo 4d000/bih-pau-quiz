@@ -1,5 +1,5 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/4d000/bih-pau-quiz/edit/main/README.md)
-[![en](https://img.shields.io/badge/lang-bs-yellow.svg)](https://github.com/4d000/bih-pau-quiz/edit/main/README.bs.md)
+[![bs](https://img.shields.io/badge/lang-bs-yellow.svg)](https://github.com/4d000/bih-pau-quiz/edit/main/README.bs.md)
 
 # 🇧🇦 BiH Public Administration Exam Practice
 
