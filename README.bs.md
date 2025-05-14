@@ -1,5 +1,5 @@
-[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/4d000/bih-pau-quiz/main/README.md)
-[![bs](https://img.shields.io/badge/lang-bs-yellow.svg)](https://github.com/4d000/bih-pau-quiz/main/README.bs.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/4d000/bih-pau-quiz/blob/main/README.md)
+[![bs](https://img.shields.io/badge/lang-bs-yellow.svg)](https://github.com/4d000/bih-pau-quiz/blob/main/README.bs.md)
 
 
 # 🇧🇦 Vježba za Ispit iz Javne Uprave u BiH
